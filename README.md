@@ -2,5 +2,5 @@
 Interpreter (Racket)
 
 ## Contributors ##
-Garret Mook
+Garret Mook <br>
 Katie Pell

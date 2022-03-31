@@ -29,7 +29,7 @@
 ;Looks up a key value pair in the environment
 (define (lookup [env : Env] [key : Symbol]): Value
   (type-case (Optionof Value) (hash-ref env key) ; What variant of OptionOf is x?
-    [(none) (v-str "nothing")] ; If its variant is "none" THIS SHOULD BE A RAISE ERROR INSTEAD
+    [(none) (raise-error (err-unbound-var key))] ; If its variant is "none" THIS SHOULD BE A RAISE ERROR INSTEAD
     [(some x) x] ; If its variant is "some", return its value
     )
 )
@@ -54,11 +54,12 @@
   )
 
 ; VAR helper function: Translates a v-bool to a Boolean
-(define (var_helper [result : Value]): Boolean
-  (type-case Value result
-    [(v-bool result) (if result #t #f)]
-  (else #f))
-  )
+;(define (var_helper [result : Value]): Boolean ; lookup needs to happen in here
+;  (type-case Value result
+;    [(v-bool result) (if result some )]
+;  (else #f))
+;  )
+
 
 ; APP helper function: applies a function to an argument, returns a value
 (define (appHelper [func : Value] [arg : Value] [env : Env]) : Value ;insert key value pair into environment where key is param of v-fun that is passed in as func and value is arg
@@ -66,7 +67,7 @@
     ;[(v-fun param body env) (v-fun param body (insert_pair env param arg))]
     ;[(v-fun param body env) (v-fun param body (insert_pair env (v-fun-param func) arg))]
     ;[(v-fun param body env) (interp_recursive body (insert_pair env (v-fun-param func) arg))]
-    [(v-fun param body env) (interp_recursive (v-fun-body func) (insert_pair env (v-fun-param func) arg))]
+    [(v-fun param body env1) (interp_recursive (v-fun-body func) (insert_pair env (v-fun-param func) arg))]
     [else (raise-error (err-not-a-function arg))] ;pass the arg into the error
   )
   )
@@ -85,6 +86,7 @@
     [else expr])
   )
 
+
 ; Recursive INTERP function w/environment
 (define (interp_recursive [expr : Expr] [env : Env]): Value
   (type-case Expr expr
@@ -93,7 +95,7 @@
     [(e-bool expr) (v-bool expr)]
     [(e-op op left right) (eopHelper op (interp_recursive left env) (interp_recursive right env))]
     [(e-if cond consq altern) (IfStatementChecker cond consq altern)]
-    [(e-var name) (v-bool (var_helper (lookup env name)))] ; done, needs testing
+    [(e-var name) (lookup env name)] ; done, needs testing
     [(e-lam param body) (v-fun param body env)] ; done, needs testing
     [(e-app func arg) (appHelper (interp_recursive func env) (interp_recursive arg env) env)]
    ;[(e-app func arg) (v-num (func arg))] ;how to get from e-app to number/Value?
@@ -164,7 +166,12 @@
      )
   )
 
+
+
 ; INTERP wrapper function
 (define (interp [expr : Expr]): Value
   (interp_recursive expr (make_env))
   )
+
+
+

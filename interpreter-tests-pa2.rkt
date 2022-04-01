@@ -387,7 +387,6 @@
   )
 
 ;;EXTRA Sugar tests
-
   ;Tests 102-105: nested AND and OR
   ;102. Tests nested desugar AND(should return true)
   (test-equal? "NESTED TEST: desugar AND - should return true"
@@ -405,8 +404,6 @@
   (test-equal? "NESTED TEST: desugar OR - should return false"
                (eval `{if (or (or (or (or false false) (or false false)) (or (or false false) (or false false))) (or (or (or false false) (or false false)) (or (or false false) (or false false)))) true false}) (v-bool #f)
   ) 
-
-
 ;;END EXTRA
 
   
@@ -436,6 +433,11 @@
                (lookup (hash-set (make_env) 'A (v-str "test")) 'A) (v-str "test")
   )
 
+  ;112. Tests for looking up a key in the Env(string with whitespace)
+  (test-equal? "Test for looking up a key in the Env"
+               (lookup (hash-set (make_env) 'A (v-str "two words")) 'A) (v-str "two words")
+  )
+  
   ;113. Tests raise error for simple expression with unknown identifier
   (test-raises-interp-error? "II-E-1: Raises error for simple expression with unknown identifier"
                (eval `a) (err-unbound-var 'a)
@@ -447,168 +449,173 @@
    )
 
 
-  ;;----Let tests----
-
+ ;;Test 115-122: Let tests
+ ;115. Tests simple Lambda
  (test-equal? "Testing Lam"
                (eval `((lam x (+ x 3)) 2)) (v-num 5))
-  
+  ;116. Tests the let identity (just returning what the value is)
   (test-equal? "Testing the let identity (just returning what the value is)"
                (eval `{let (x 5) x}) (v-num 5))
-
+  ;117. Tests let example from Brown's 3.3.1.2, simple addition
   (test-equal? "The let example from Brown's 3.3.1.2, simple addition"
                (eval `{let (x 1) (+ x 2)}) (v-num 3))
-
+  ;118. Tests the same let addition but on the other branch
   (test-equal? "The same let addition but on the other branch"
                (eval `{let (x 1) (+ 2 x)}) (v-num 3))
-
+  ;119. Tests nested lets
   (test-equal? "Nested lets"
                (eval `{let (x 1) (let (y 2) (+ y x))}) (v-num 3))
-
+  ;120. Tests deeply nested lets
   (test-equal? "Deeply nested let"
                (eval `{let (x0 0) (let (x1 1) (let (x2 2) (let (x3 3) (let (x4 4) (let (x5 5) (let (x6 6) (let (x7 7) (let (x8 8) (let (x9 9) (let (x10 10) (let (x11 11) (let (x12 12) (let (x13 13) (let (x14 14) (let (x15 15) (let (x16 16) (let (x17 17) (let (x18 18) (let (x19 19) (let (x20 20) (let (x21 21) (let (x22 22) (let (x23 23) (let (x24 24) (let (x25 25) (let (x26 26) (let (x27 27) (let (x28 28) (let (x29 29) (let (x30 30) (let (x31 31) (let (x32 32) (let (x33 33) (let (x34 34) (let (x35 35) (let (x36 36) (let (x37 37) (let (x38 38) (let (x39 39) (let (x40 40) (let (x41 41) (let (x42 42) (let (x43 43) (let (x44 44) (let (x45 45) (let (x46 46) (let (x47 47) (let (x48 48) (let (x49 49) (+ x0 (+ x1 (+ x2 (+ x3 (+ x4 (+ x5 (+ x6 (+ x7 (+ x8 (+ x9 (+ x10 (+ x11 (+ x12 (+ x13 (+ x14 (+ x15 (+ x16 (+ x17 (+ x18 (+ x19 (+ x20 (+ x21 (+ x22 (+ x23 (+ x24 (+ x25 (+ x26 (+ x27 (+ x28 (+ x29 (+ x30 (+ x31 (+ x32 (+ x33 (+ x34 (+ x35 (+ x36 (+ x37 (+ x38 (+ x39 (+ x40 (+ x41 (+ x42 (+ x43 (+ x44 (+ x45 (+ x46 (+ x47 (+ x48 (+ x49 0)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))}) (v-num 1225))
-  ; sum of n consecutive numbers is n/2 (first num + last num). 2/49 (1 + 49) = 1225
-
+  ;121. Tests check on evaluating the value in let
   (test-equal? "check on evaluating the value in let"
                (eval `{let (x (+ 0 (+ 1 (+ 2 (+ 3 (+ 4 (+ 5 (+ 6 (+ 7 (+ 8 (+ 9 (+ 10 (+ 11 (+ 12 (+ 13 (+ 14 (+ 15 (+ 16 (+ 17 (+ 18 (+ 19 (+ 20 (+ 21 (+ 22 (+ 23 (+ 24 (+ 25 (+ 26 (+ 27 (+ 28 (+ 29 (+ 30 (+ 31 (+ 32 (+ 33 (+ 34 (+ 35 (+ 36 (+ 37 (+ 38 (+ 39 (+ 40 (+ 41 (+ 42 (+ 43 (+ 44 (+ 45 (+ 46 (+ 47 (+ 48 (+ 49 0))))))))))))))))))))))))))))))))))))))))))))))))))) x}) (v-num 1225))
-
+  ;122. Tests correct scoping
   (test-equal? "Correct scoping"
                (eval `{let (x0 0) (let (x1 1) (let (x2 2) (let (x3 3) (let (x4 4) (let (x5 5) (let (x6 6) (let (x7 7) (let (x8 8) (let (x9 9) (let (x10 10) (let (x11 11) (let (x12 12) (let (x13 13) (let (x14 14) (let (x15 15) (let (x16 16) (let (x17 17) (let (x18 18) (let (x19 19) (let (x20 20) (let (x21 21) (let (x22 22) (let (x23 23) (let (x24 24) (let (x25 25) (let (x26 26) (let (x27 27) (let (x28 28) (let (x29 29) (let (x30 30) (let (x31 31) (let (x32 32) (let (x33 33) (let (x34 34) (let (x35 35) (let (x36 36) (let (x37 37) (let (x38 38) (let (x39 39) (let (x40 40) (let (x41 41) (let (x42 42) (let (x43 43) (let (x44 44) (let (x45 45) (let (x46 46) (let (x47 47) (let (x48 48) (let (x49 x0) (+ x0 (+ x1 (+ x2 (+ x3 (+ x4 (+ x5 (+ x6 (+ x7 (+ x8 (+ x9 (+ x10 (+ x11 (+ x12 (+ x13 (+ x14 (+ x15 (+ x16 (+ x17 (+ x18 (+ x19 (+ x20 (+ x21 (+ x22 (+ x23 (+ x24 (+ x25 (+ x26 (+ x27 (+ x28 (+ x29 (+ x30 (+ x31 (+ x32 (+ x33 (+ x34 (+ x35 (+ x36 (+ x37 (+ x38 (+ x39 (+ x40 (+ x41 (+ x42 (+ x43 (+ x44 (+ x45 (+ x46 (+ x47 (+ x48 (+ x49 0 )))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))}) (v-num 1176))
-  ; in this case x49 is set to the value of x0
-  ; 1225 - 49 = 1176
 
-;Jackson Feinstein-Kernan tests
+  ;Test 123-132: Jackson Feinstein-Kernan tests
+  ;123. Tests AND using num= and str=
   (test-equal? "AND using num= and str="
                (eval `(and (num= 5 5)(str= "movie" "movie")))
                (v-bool #t))
+  ;124. Tests AND using str=
   (test-equal? "AND using str="
                (eval `(and (str= "10" "ten")(str= "cat" "cat")))
                (v-bool #f))
-   (test-equal? "AND using append str= and num="
+  ;125. Tests AND using append str= and num=
+  (test-equal? "AND using append str= and num="
                (eval `(and (str= (++ "toy" "cat") "tomcat") (num= (+ 23 54) 56)))
                (v-bool #f))
+  ;126. Tests AND using recursion
   (test-equal? "AND using recursion"
                (eval `(and (str= (++ "base" "ball") "baseball") (and (num= 1 1) (str= "eq" "eq"))))
                (v-bool #t))
-
-(test-equal? "Test IF desugar AND returns false "
+  ;127. Tests IF desugar AND returns false
+  (test-equal? "Test IF desugar AND returns false "
                (eval `{if (and true (str= (++ "Green" "Light") "GreenLightMeansGo" )) true false}) (v-bool #f)
   )
-
+  ;128. Tests IF desugar OR returns false 
   (test-equal? "Test IF desugar OR returns false "
                (eval `{if (or false (num= (+ 1 1) 3)) true false}) (v-bool #f)
   ) 
-
+  ;129. Tests IF desugar OR returns true complex SHORT CIRCUIT
   (test-equal? "Test IF desugar OR returns true complex SHORT CIRCUIT"
                (eval `{if (or true "123") true false}) (v-bool #t)
   ) 
-
-    (test-equal? "Test if case for numbers"
+  ;130. Tests if case for numbers
+  (test-equal? "Test if case for numbers"
                (eval `{+ 1(if (and (num= 1 1) (num= 2 2)) 1 2)}) (v-num 2)
   )
-
+  ;131. Tests desugar AND bad bool value in second arg
   (test-raises-interp-error? "Test desugar AND bad bool value in second arg"
                (eval `{and true "notBool"}) (err-if-got-non-boolean (v-str "notBool"))
   )
-
+  ;132. Tests desugar AND bad bool value in first arg
   (test-raises-interp-error? "Test desugar AND bad bool value in first arg"
                (eval `{and "notBool" true}) (err-if-got-non-boolean (v-str "notBool"))
   )
 
-  ;Jessica Wood Tests
+  ;Jessica Wood Test
+  ;133. Tests scope with same variable name
    (test-equal? "test scope with same variable name"
                (eval `(let (x 1) (+ x (let (x 3) (+ x 2))))) (v-num 6))
 
 
-  ;Hanna Sloth tests
-    (test-equal? "Testing simple lambda (addition variable left)"
+  ;Test 134-145: Hanna Sloth tests
+  ;134. Tests simple lambda (addition variable left)
+   (test-equal? "Testing simple lambda (addition variable left)"
 
                (eval `((lam x (+ x 1))4))(v-num 5))
-
+  ;135. Tests simple lambda (addition variable right
   (test-equal? "Testing simple lambda (addition variable right)"
                (eval `((lam x (+ 5 x))4))(v-num 9))
 
-
+  ;136. Tests simple lambda (addition 2 variables)
   (test-equal? "Testing simple lambda (addition 2 variables)"
                (eval `((lam x (+ x x))4))(v-num 8))
 
-
+  ;137. Tests simple lambda (append variable left)
   (test-equal? "Testing simple lambda (append variable left)"
                (eval `((lam x (++ x "ing")) "work"))(v-str "working"))
 
-
+  ;138. Tests simple lambda (append variable right)
   (test-equal? "Testing simple lambda (append variable right)"
                (eval `((lam y (++ "work" y)) "ing"))(v-str "working"))
 
-
+  ;139. Tests simple lambda (append multi character variable left)
   (test-equal? "Testing simple lambda (append multi character variable left)"
                (eval `((lam abc (++ abc "ing")) "work"))(v-str "working"))
 
-  ;Did Not work
+  ;140. Tests lambda (if and str= variable left)
   (test-equal? "Testing lambda (if and str= variable left)"
                (eval `((lam x (if (str= x "test") true false))"test"))(v-bool #t))
 
 
-  ;Did Not work
+  ;141. Tests nested lambda (if and str= variable left)
   (test-equal? "Testing nested lambda (if and str= variable left)"
                (eval `((lam x (if (str= x "test") ((lam y (+ y y))7) false))"test"))(v-num 14))
 
-
+  ;142. Tests lambda (using function as arg)
   (test-equal? "Testing lambda (using function as arg)"
                (eval `((lam f (f (f 6))) (lam x (+ x 10)))) (v-num 26))
 
-
+  ;143. Tests lambdas in lambdas in lambdas
   (test-equal? "Testing lambdas in lambdas in lambdas"
                (eval `((lam x (+ ((lam x (+ ((lam x (+ x x)) ((lam x (+ x x)) ((lam x (+ x x))x))) ((lam x (+ x x))x))) ((lam x (+ x x))x))
                                  ((lam x (+ ((lam x (+ x x)) ((lam x (+ x x)) ((lam x (+ x x))x))) ((lam x (+ x x))x))) ((lam x (+ x x))x)))) 2))
                (v-num 80))
 
-
+  ;144. Tests lambda (updating value of x)
   (test-equal? "Testing lambda (updating value of x)"
                (eval `((lam x ((lam x (+ x 1))x))2)) (v-num 3))
 
-
-  (test-equal? "Test Homework 7 #3"
+  ;145. Tests more Complex Nested Lambdas 
+  (test-equal? "Test Complex Nested Lambdas( Homework 7 #2)"
                (eval `((lam x ((lam f (f (+ x (+ x 1)))) (lam y (+ x y)))) 3))(v-num 10))
 
 
-    ;My tests
-    (test-equal? "Testing LAMBDA 1"
+    ;Tests 146-152: Our own tests for Lambdas and nested Lambdas
+    ;146. Tests a single Lambda
+    (test-equal? "Testing a single LAMBDA (1)"
 
                (eval `((lam x (+ x 3))3))(v-num 6))
-
+      ;147. Tests nested LAMBDA 2a
       (test-equal? "Testing nested LAMBDA 2a"
 
                (eval `((lam x (+ x ((lam x (+ x 3))3)))3))(v-num 9))
-
+      ;148. Tests nested LAMBDA 2b
       (test-equal? "Testing nested LAMBDA 2b"
 
                (eval `((lam x (+ x ((lam x (+ x ((lam x (+ x 3))3)))3)))3))(v-num 12))
-
+      ;149. Tess nested LAMBDA 2c
       (test-equal? "Testing nested LAMBDA 2c"
 
                (eval `((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x 3))3)))3)))3)))3))(v-num 15))
-
+      ;150. Tests nested LAMBDA 2d
       (test-equal? "Testing nested LAMBDA 2d"
 
                (eval `((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x 3))3)))3)))3)))3)))3))(v-num 18))
-  
+      ;151. Tests nested LAMBDA 2e
       (test-equal? "Testing nested LAMBDA 2e"
 
                (eval `((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x 3))3)))3)))3)))3)))3)))3))(v-num 21))
-
+      ;152. Tests nested LAMBDA 2f
       (test-equal? "Testing nested LAMBDA 2f"
 
                (eval `((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x 3))3)))3)))3)))3)))3)))3)))3))(v-num 24))
 
-  ;Zachary Robinson's tests
-      (test-equal? "Test LET with sugar in variable assignment"
+  ;Test 153-155. Zachary Robinson's tests
+  ;153. Tests LET with sugar in variable assignment
+  (test-equal? "Test LET with sugar in variable assignment"
                (eval `{let (x (and true false)) x}) (v-bool #f)
   )
-
+  ;154. Tests LET with sugar in the body
   (test-equal? "Test LET with sugar in the body"
                (eval `{let (x true) (and x x)}) (v-bool #t)
   )
-
+  ;155. Tests LET with sugar in variable assignment and the body
   (test-equal? "Test LET with sugar in variable assignment and the body"
                (eval `{let (x (and true false)) (and x x)}) (v-bool #f)
   )

@@ -1,6 +1,6 @@
 #lang racket
 ;; Adapted by S. Rivoire from https://cs.brown.edu/courses/cs173/2021/implementation-specs/interp/interpreter-tests.rkt
-;; Completed by Katie Pell & Garret Mook
+;; my tests for SSU CS 460 Programming Assignment #1
 
 ;; =============================================================================
 ;; Interpreter: interpreter-tests.rkt
@@ -12,7 +12,7 @@
 
 ;; DO NOT EDIT ABOVE THIS LINE =================================================
 (define/provide-test-suite student-tests ;; DO NOT EDIT THIS LINE ==========
-
+3
 ;;-------------------------------------
 ;;           PROJECT 1 TEST
 ;;-------------------------------------
@@ -278,7 +278,7 @@
                              (eval `(if (+ 100 200) "cat" "dog"))
                              (err-if-got-non-boolean (v-num 300)))
 
-  ;; Test 77-88: Error handling for bad-arg-to-op
+  ;; Test 77-: Error handling for bad-arg-to-op
   ;77. Tests string const as left operand of +
   (test-raises-interp-error? "9a: String const as left operand of +"
                              (eval `(+ "cat" 1))
@@ -332,154 +332,276 @@
 ;;           PROJECT 2 TEST
 ;;-------------------------------------
   
-  ;Test 89-100: desguar and and or
+  ;Test 89-: desguar and and or
   ;;89. Tests basic desugar AND
   (test-equal? "Test basic desugar AND"
-               (eval `{and true true}) (v-bool #t))
+               (eval `{and true true}) (v-bool #t)
+  )
   ;;90. Tests basic desugar AND returns false
     (test-equal? "Test basic desugar AND returns false "
-               (eval `{and true false}) (v-bool #f))
+               (eval `{and true false}) (v-bool #f)
+  )
   ;;91. Tests basic desugar OR
   (test-equal? "Test basic desugar OR"
                (eval `{or false true}) (v-bool #t)) 
+
   ;;92. Tests IF desugar AND returns true
    (test-equal? "Test IF desugar AND returns true"
-               (eval `{if (and true true) true false}) (v-bool #t))
+               (eval `{if (and true true) true false}) (v-bool #t)
+  )
   ;;93. Tests IF desugar OR returns true
   (test-equal? "Test IF desugar OR returns true"
-               (eval `{if (or false true) true false}) (v-bool #t)) 
+               (eval `{if (or false true) true false}) (v-bool #t)
+  ) 
   ;;94. Tests IF desugar AND returns fals
   (test-equal? "Test IF desugar AND returns false"
-               (eval `{if (and true false) true false}) (v-bool #f))
+               (eval `{if (and true false) true false}) (v-bool #f)
+  )
   ;;95. Tests IF desugar OR returns false
   (test-equal? "Test IF desugar OR returns false"
-               (eval `{if (or false false) true false}) (v-bool #f)) 
+               (eval `{if (or false false) true false}) (v-bool #f)
+  ) 
   ;;96. Tests IF desugar AND returns true complex
   (test-equal? "Test IF desugar AND returns true complex"
-               (eval `{if (and (str= (++ "Appending" "This") "AppendingThis") true) true false}) (v-bool #t)) 
+               (eval `{if (and (str= (++ "Appending" "This") "AppendingThis") true) true false}) (v-bool #t)
+  ) 
   ;;97. Tests IF desugar OR returns true complex
   (test-equal? "Test IF desugar OR returns true complex"
-               (eval `{if (or false (num= (+ 1 1) 2)) true false}) (v-bool #t)) 
+               (eval `{if (or false (num= (+ 1 1) 2)) true false}) (v-bool #t)
+  ) 
   ;;98. Tests IF desugar AND returns false complex
   (test-equal? "Test IF desugar AND returns false complex"
-               (eval `{if (and true (str= (++ "Appending" "This") "AppendingThisJustKidding" )) true false}) (v-bool #f))
+               (eval `{if (and true (str= (++ "Appending" "This") "AppendingThisJustKidding" )) true false}) (v-bool #f)
+  )
   ;;99. Tests IF desugar OR returns false complex
   (test-equal? "Test IF desugar OR returns false complex"
-               (eval `{if (or false (num= (+ 1 1) 3)) true false}) (v-bool #f)) 
+               (eval `{if (or false (num= (+ 1 1) 3)) true false}) (v-bool #f)
+  ) 
   ;;100. Tests IF desugar OR returns true complex SHORT CIRCUIT
   (test-equal? "Test IF desugar OR returns true complex SHORT CIRCUIT"
-               (eval `{if (or true "abc") true false}) (v-bool #t))
-
-  ;;101. Tests IF case for numbers
+               (eval `{if (or true "abc") true false}) (v-bool #t)
+  )
+  ;;101. Tests Test if case for numbers
   (test-equal? "Test if case for numbers"
-               (eval `{ +   1   (if (and (num= 1 1) (num= 2 2)) 1 2)      }) (v-num 2))
+               (eval `{ +   1   (if (and (num= 1 1) (num= 2 2)) 1 2)      }) (v-num 2)
+  )
+
+;;EXTRA Sugar tests
 
   ;Tests 102-105: nested AND and OR
   ;102. Tests nested desugar AND(should return true)
   (test-equal? "NESTED TEST: desugar AND - should return true"
-               (eval `{if (and (and (and (and true true) (and true true)) (and (and true true) (and true true))) (and (and true true) (and true true))) true false}) (v-bool #t))
+               (eval `{if (and (and (and (and true true) (and true true)) (and (and true true) (and true true))) (and (and true true) (and true true))) true false}) (v-bool #t)
+  )
   ;103. Tests nested desugar OR(should return true)
   (test-equal? "NESTED TEST: desugar OR - should return true"
-               (eval `{if (or (or (or (or false true) (or false true)) (or (or false true) (or false true))) (or (or false true) (or false true))) true false}) (v-bool #t)) 
+               (eval `{if (or (or (or (or false true) (or false true)) (or (or false true) (or false true))) (or (or false true) (or false true))) true false}) (v-bool #t)
+  ) 
   ;104. Tests nested desugar AND(should return false)
   (test-equal? "NESTED TEST: desugar AND - should return false"
-               (eval `{if (and (and (and (and (and true false) (and true false)) (and (and true false) (and true false))) (and (and (and true false) (and true false)) (and (and true false) (and true false)))) (and (and (and true false) (and true false)) (and (and true false) (and true false)))) true false}) (v-bool #f))
+               (eval `{if (and (and (and (and (and true false) (and true false)) (and (and true false) (and true false))) (and (and (and true false) (and true false)) (and (and true false) (and true false)))) (and (and (and true false) (and true false)) (and (and true false) (and true false)))) true false}) (v-bool #f)
+  )
   ;105. Tests nested desugar OR(should return false)
   (test-equal? "NESTED TEST: desugar OR - should return false"
-               (eval `{if (or (or (or (or false false) (or false false)) (or (or false false) (or false false))) (or (or (or false false) (or false false)) (or (or false false) (or false false)))) true false}) (v-bool #f)) 
+               (eval `{if (or (or (or (or false false) (or false false)) (or (or false false) (or false false))) (or (or (or false false) (or false false)) (or (or false false) (or false false)))) true false}) (v-bool #f)
+  ) 
+
+
+;;END EXTRA
 
   
   ;Test 106-112: Enviornment tests
   ;106. Tests for creating an empty environment
   (test-equal? "Test for creating an empty environment"
-               (v-bool (hash-empty? (make_env))) (v-bool #t))
+               (v-bool (hash-empty? (make_env))) (v-bool #t)
+  )
   ;107. Tests for inserting a v-str into an empty environment (will also fail if creating an empty environment fails)
-  (test-equal? "Test for inserting a v-str into an empty environment (will also fail if creating an empty environment fails)"
-               (v-bool (hash-empty? (insert_pair (make_env) 'A (v-str "test")))) (v-bool #f))
+    (test-equal? "Test for inserting a v-str into an empty environment (will also fail if creating an empty environment fails)"
+               (v-bool (hash-empty? (insert_pair (make_env) 'A (v-str "test")))) (v-bool #f)
+  )
   ;108. Tests for inserting a v-num into an empty environment (will also fail if creating an empty environment fails)
   (test-equal? "Test for inserting a v-num into an empty environment (will also fail if creating an empty environment fails)"
-               (v-bool (hash-empty? (insert_pair (make_env) 'A (v-num 4)))) (v-bool #f))
+               (v-bool (hash-empty? (insert_pair (make_env) 'A (v-num 4)))) (v-bool #f)
+  )
   ;109. Tests for inserting a v-bool into an empty environment (will also fail if creating an empty environment fails)
   (test-equal? "Test for inserting a v-bool into an empty environment (will also fail if creating an empty environment fails)"
-               (v-bool (hash-empty? (insert_pair (make_env) 'A (v-bool #t)))) (v-bool #f))
+               (v-bool (hash-empty? (insert_pair (make_env) 'A (v-bool #t)))) (v-bool #f)
+  )
   ;110. Tests for inserting the correct value into an empty environment
   (test-equal? "Test for inserting the correct value into an empty environment"
-               (hash-ref (insert_pair (make_env) 'A (v-str "test")) 'A) (v-str "test"))
+               (hash-ref (insert_pair (make_env) 'A (v-str "test")) 'A) (v-str "test")
+  )
   ;111. Tests for looking up a key in the Env
   (test-equal? "Test for looking up a key in the Env"
-               (lookup (hash-set (make_env) 'A (v-str "test")) 'A) (v-str "test"))
+               (lookup (hash-set (make_env) 'A (v-str "test")) 'A) (v-str "test")
+  )
 
-  
-  ;112. Test for simple expression with unknown identifier
-  (test-raises-interp-error? "Simple expression with unknown identifier"
-               (eval `a) (err-unbound-var 'a))
-  ;113.
+  ;113. Tests raise error for simple expression with unknown identifier
   (test-raises-interp-error? "II-E-1: Raises error for simple expression with unknown identifier"
-               (lookup (make_env) 'B) (err-unbound-var 'B))
+               (eval `a) (err-unbound-var 'a)
+   )
+
+  ;114. Tests raises error for simple expression with unknown identifier
+  (test-raises-interp-error? "II-E-1: Raises error for simple expression with unknown identifier"
+               (lookup (make_env) 'B) (err-unbound-var 'B)
+   )
 
 
-  ;Test 114-121: Lam tests
-  ;114. Tests e-app using lam
-  (test-equal? "Testing Lam"
+  ;;----Let tests----
+
+ (test-equal? "Testing Lam"
                (eval `((lam x (+ x 3)) 2)) (v-num 5))
-  ;115. Tests the let identity by returning it's own value
+  
   (test-equal? "Testing the let identity (just returning what the value is)"
                (eval `{let (x 5) x}) (v-num 5))
-  ;116. The let example from Brown's 3.3.1.2, simple addition
+
   (test-equal? "The let example from Brown's 3.3.1.2, simple addition"
                (eval `{let (x 1) (+ x 2)}) (v-num 3))
-  ;117. The same let addition but on the other branch
+
   (test-equal? "The same let addition but on the other branch"
                (eval `{let (x 1) (+ 2 x)}) (v-num 3))
-  ;118. Tests forested lets
+
   (test-equal? "Nested lets"
                (eval `{let (x 1) (let (y 2) (+ y x))}) (v-num 3))
-  ;119. Tests deeply nested let
+
   (test-equal? "Deeply nested let"
                (eval `{let (x0 0) (let (x1 1) (let (x2 2) (let (x3 3) (let (x4 4) (let (x5 5) (let (x6 6) (let (x7 7) (let (x8 8) (let (x9 9) (let (x10 10) (let (x11 11) (let (x12 12) (let (x13 13) (let (x14 14) (let (x15 15) (let (x16 16) (let (x17 17) (let (x18 18) (let (x19 19) (let (x20 20) (let (x21 21) (let (x22 22) (let (x23 23) (let (x24 24) (let (x25 25) (let (x26 26) (let (x27 27) (let (x28 28) (let (x29 29) (let (x30 30) (let (x31 31) (let (x32 32) (let (x33 33) (let (x34 34) (let (x35 35) (let (x36 36) (let (x37 37) (let (x38 38) (let (x39 39) (let (x40 40) (let (x41 41) (let (x42 42) (let (x43 43) (let (x44 44) (let (x45 45) (let (x46 46) (let (x47 47) (let (x48 48) (let (x49 49) (+ x0 (+ x1 (+ x2 (+ x3 (+ x4 (+ x5 (+ x6 (+ x7 (+ x8 (+ x9 (+ x10 (+ x11 (+ x12 (+ x13 (+ x14 (+ x15 (+ x16 (+ x17 (+ x18 (+ x19 (+ x20 (+ x21 (+ x22 (+ x23 (+ x24 (+ x25 (+ x26 (+ x27 (+ x28 (+ x29 (+ x30 (+ x31 (+ x32 (+ x33 (+ x34 (+ x35 (+ x36 (+ x37 (+ x38 (+ x39 (+ x40 (+ x41 (+ x42 (+ x43 (+ x44 (+ x45 (+ x46 (+ x47 (+ x48 (+ x49 0)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))}) (v-num 1225))
-  ;120. Check on evaluating the value in let
+  ; sum of n consecutive numbers is n/2 (first num + last num). 2/49 (1 + 49) = 1225
+
   (test-equal? "check on evaluating the value in let"
                (eval `{let (x (+ 0 (+ 1 (+ 2 (+ 3 (+ 4 (+ 5 (+ 6 (+ 7 (+ 8 (+ 9 (+ 10 (+ 11 (+ 12 (+ 13 (+ 14 (+ 15 (+ 16 (+ 17 (+ 18 (+ 19 (+ 20 (+ 21 (+ 22 (+ 23 (+ 24 (+ 25 (+ 26 (+ 27 (+ 28 (+ 29 (+ 30 (+ 31 (+ 32 (+ 33 (+ 34 (+ 35 (+ 36 (+ 37 (+ 38 (+ 39 (+ 40 (+ 41 (+ 42 (+ 43 (+ 44 (+ 45 (+ 46 (+ 47 (+ 48 (+ 49 0))))))))))))))))))))))))))))))))))))))))))))))))))) x}) (v-num 1225))
-  ;121. Correct scoping
+
   (test-equal? "Correct scoping"
                (eval `{let (x0 0) (let (x1 1) (let (x2 2) (let (x3 3) (let (x4 4) (let (x5 5) (let (x6 6) (let (x7 7) (let (x8 8) (let (x9 9) (let (x10 10) (let (x11 11) (let (x12 12) (let (x13 13) (let (x14 14) (let (x15 15) (let (x16 16) (let (x17 17) (let (x18 18) (let (x19 19) (let (x20 20) (let (x21 21) (let (x22 22) (let (x23 23) (let (x24 24) (let (x25 25) (let (x26 26) (let (x27 27) (let (x28 28) (let (x29 29) (let (x30 30) (let (x31 31) (let (x32 32) (let (x33 33) (let (x34 34) (let (x35 35) (let (x36 36) (let (x37 37) (let (x38 38) (let (x39 39) (let (x40 40) (let (x41 41) (let (x42 42) (let (x43 43) (let (x44 44) (let (x45 45) (let (x46 46) (let (x47 47) (let (x48 48) (let (x49 x0) (+ x0 (+ x1 (+ x2 (+ x3 (+ x4 (+ x5 (+ x6 (+ x7 (+ x8 (+ x9 (+ x10 (+ x11 (+ x12 (+ x13 (+ x14 (+ x15 (+ x16 (+ x17 (+ x18 (+ x19 (+ x20 (+ x21 (+ x22 (+ x23 (+ x24 (+ x25 (+ x26 (+ x27 (+ x28 (+ x29 (+ x30 (+ x31 (+ x32 (+ x33 (+ x34 (+ x35 (+ x36 (+ x37 (+ x38 (+ x39 (+ x40 (+ x41 (+ x42 (+ x43 (+ x44 (+ x45 (+ x46 (+ x47 (+ x48 (+ x49 0 )))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))}) (v-num 1176))
+  ; in this case x49 is set to the value of x0
+  ; 1225 - 49 = 1176
 
-  ;Test 122-: AND and OR tests
-  ;122. Checking AND with num= and str=
+;Jackson Feinstein-Kernan tests
   (test-equal? "AND using num= and str="
                (eval `(and (num= 5 5)(str= "movie" "movie")))
                (v-bool #t))
-  ;123. Tests AND and str=
   (test-equal? "AND using str="
                (eval `(and (str= "10" "ten")(str= "cat" "cat")))
                (v-bool #f))
-  ;124. Tests AND and str= and num=
-  (test-equal? "AND using append str= and num="
+   (test-equal? "AND using append str= and num="
                (eval `(and (str= (++ "toy" "cat") "tomcat") (num= (+ 23 54) 56)))
                (v-bool #f))
-  ;125. Tests AND using recursion
   (test-equal? "AND using recursion"
                (eval `(and (str= (++ "base" "ball") "baseball") (and (num= 1 1) (str= "eq" "eq"))))
                (v-bool #t))
-  ;126. Tests IF desugar AND returns false
-  (test-equal? "Test IF desugar AND returns false "
-               (eval `{if (and true (str= (++ "Green" "Light") "GreenLightMeansGo" )) true false}) (v-bool #f))
-  ;127. Tests IF desugar OR returns false
+
+(test-equal? "Test IF desugar AND returns false "
+               (eval `{if (and true (str= (++ "Green" "Light") "GreenLightMeansGo" )) true false}) (v-bool #f)
+  )
+
   (test-equal? "Test IF desugar OR returns false "
-               (eval `{if (or false (num= (+ 1 1) 3)) true false}) (v-bool #f)) 
-  ;128. Tests IF desugar OR returns true complex SHORT CIRCUIT
+               (eval `{if (or false (num= (+ 1 1) 3)) true false}) (v-bool #f)
+  ) 
+
   (test-equal? "Test IF desugar OR returns true complex SHORT CIRCUIT"
-               (eval `{if (or true "123") true false}) (v-bool #t)) 
-  ;129. Tests if case for numbers
-  (test-equal? "Test if case for numbers"
-               (eval `{+ 1(if (and (num= 1 1) (num= 2 2)) 1 2)}) (v-num 2))
-  ;130. Test desugar AND bad bool value in second arg
+               (eval `{if (or true "123") true false}) (v-bool #t)
+  ) 
+
+    (test-equal? "Test if case for numbers"
+               (eval `{+ 1(if (and (num= 1 1) (num= 2 2)) 1 2)}) (v-num 2)
+  )
+
   (test-raises-interp-error? "Test desugar AND bad bool value in second arg"
-               (eval `{and true "notBool"}) (err-if-got-non-boolean (v-str "notBool")))
-  ;131. Tests desugar AND bad bool value in first arg
+               (eval `{and true "notBool"}) (err-if-got-non-boolean (v-str "notBool"))
+  )
+
   (test-raises-interp-error? "Test desugar AND bad bool value in first arg"
-               (eval `{and "notBool" true}) (err-if-got-non-boolean (v-str "notBool")))
+               (eval `{and "notBool" true}) (err-if-got-non-boolean (v-str "notBool"))
+  )
+
+  ;Jessica Wood Tests
+   (test-equal? "test scope with same variable name"
+               (eval `(let (x 1) (+ x (let (x 3) (+ x 2))))) (v-num 6))
+
+
+  ;Hanna Sloth tests
+    (test-equal? "Testing simple lambda (addition variable left)"
+
+               (eval `((lam x (+ x 1))4))(v-num 5))
+
+  (test-equal? "Testing simple lambda (addition variable right)"
+               (eval `((lam x (+ 5 x))4))(v-num 9))
+
+
+  (test-equal? "Testing simple lambda (addition 2 variables)"
+               (eval `((lam x (+ x x))4))(v-num 8))
+
+
+  (test-equal? "Testing simple lambda (append variable left)"
+               (eval `((lam x (++ x "ing")) "work"))(v-str "working"))
+
+
+  (test-equal? "Testing simple lambda (append variable right)"
+               (eval `((lam y (++ "work" y)) "ing"))(v-str "working"))
+
+
+  (test-equal? "Testing simple lambda (append multi character variable left)"
+               (eval `((lam abc (++ abc "ing")) "work"))(v-str "working"))
+
+  ;Did Not work
+  (test-equal? "Testing lambda (if and str= variable left)"
+               (eval `((lam x (if (str= x "test") true false))"test"))(v-bool #t))
+
+
+  ;Did Not work
+  (test-equal? "Testing nested lambda (if and str= variable left)"
+               (eval `((lam x (if (str= x "test") ((lam y (+ y y))7) false))"test"))(v-num 14))
+
+
+  (test-equal? "Testing lambda (using function as arg)"
+               (eval `((lam f (f (f 6))) (lam x (+ x 10)))) (v-num 26))
+
+
+  (test-equal? "Testing lambdas in lambdas in lambdas"
+               (eval `((lam x (+ ((lam x (+ ((lam x (+ x x)) ((lam x (+ x x)) ((lam x (+ x x))x))) ((lam x (+ x x))x))) ((lam x (+ x x))x))
+                                 ((lam x (+ ((lam x (+ x x)) ((lam x (+ x x)) ((lam x (+ x x))x))) ((lam x (+ x x))x))) ((lam x (+ x x))x)))) 2))
+               (v-num 80))
+
+
+  (test-equal? "Testing lambda (updating value of x)"
+               (eval `((lam x ((lam x (+ x 1))x))2)) (v-num 3))
+
+
+  (test-equal? "Test Homework 7 #3"
+               (eval `((lam x ((lam f (f (+ x (+ x 1)))) (lam y (+ x y)))) 3))(v-num 10))
+
+
+    ;My tests
+    (test-equal? "Testing LAMBDA 1"
+
+               (eval `((lam x (+ x 3))3))(v-num 6))
+
+      (test-equal? "Testing nested LAMBDA 2a"
+
+               (eval `((lam x (+ x ((lam x (+ x 3))3)))3))(v-num 9))
+
+      (test-equal? "Testing nested LAMBDA 2b"
+
+               (eval `((lam x (+ x ((lam x (+ x ((lam x (+ x 3))3)))3)))3))(v-num 12))
+
+      (test-equal? "Testing nested LAMBDA 2c"
+
+               (eval `((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x 3))3)))3)))3)))3))(v-num 15))
+
+      (test-equal? "Testing nested LAMBDA 2d"
+
+               (eval `((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x 3))3)))3)))3)))3)))3))(v-num 18))
+  
+      (test-equal? "Testing nested LAMBDA 2e"
+
+               (eval `((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x 3))3)))3)))3)))3)))3)))3))(v-num 21))
+
+      (test-equal? "Testing nested LAMBDA 2f"
+
+               (eval `((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x 3))3)))3)))3)))3)))3)))3)))3))(v-num 24))
+
 )
+
 
 ;; DO NOT EDIT BELOW THIS LINE =================================================
 

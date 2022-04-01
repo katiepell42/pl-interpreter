@@ -1,6 +1,5 @@
 #lang racket
 ;; Adapted by S. Rivoire from https://cs.brown.edu/courses/cs173/2021/implementation-specs/interp/interpreter-tests.rkt
-;; my tests for SSU CS 460 Programming Assignment #1
 
 ;; =============================================================================
 ;; Interpreter: interpreter-tests.rkt

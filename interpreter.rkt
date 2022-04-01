@@ -94,7 +94,7 @@
     [(e-str expr) (v-str expr)]
     [(e-bool expr) (v-bool expr)]
     [(e-op op left right) (eopHelper op (interp_recursive left env) (interp_recursive right env))]
-    [(e-if cond consq altern) (IfStatementChecker cond consq altern)]
+    [(e-if cond consq altern) (IfStatementChecker cond consq altern env)]
     [(e-var name) (lookup env name)] ; done, needs testing
     [(e-lam param body) (v-fun param body env)] ; done, needs testing
     [(e-app func arg) (appHelper (interp_recursive func env) (interp_recursive arg env) env)]
@@ -106,12 +106,12 @@
 
 
 ; IF statement error handling function
-(define (IfStatementChecker [cond : Expr] [consq : Expr] [altern : Expr])
-  (type-case Value (interp cond)
+(define (IfStatementChecker [cond : Expr] [consq : Expr] [altern : Expr] [env : Env])
+  (type-case Value (interp_recursive cond env)
     [(v-bool bigQual) (if bigQual
-                          (interp consq)
-                          (interp altern))]
-    [else (raise-error (err-if-got-non-boolean (interp cond)))]
+                          (interp_recursive consq env)
+                          (interp_recursive altern env))]
+    [else (raise-error (err-if-got-non-boolean (interp_recursive cond env)))]
   )
 )
 
@@ -172,6 +172,5 @@
 (define (interp [expr : Expr]): Value
   (interp_recursive expr (make_env))
   )
-
 
 

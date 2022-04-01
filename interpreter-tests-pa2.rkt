@@ -600,6 +600,18 @@
 
                (eval `((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x ((lam x (+ x 3))3)))3)))3)))3)))3)))3)))3))(v-num 24))
 
+  ;Zachary Robinson's tests
+      (test-equal? "Test LET with sugar in variable assignment"
+               (eval `{let (x (and true false)) x}) (v-bool #f)
+  )
+
+  (test-equal? "Test LET with sugar in the body"
+               (eval `{let (x true) (and x x)}) (v-bool #t)
+  )
+
+  (test-equal? "Test LET with sugar in variable assignment and the body"
+               (eval `{let (x (and true false)) (and x x)}) (v-bool #f)
+  )
 )
 
 
